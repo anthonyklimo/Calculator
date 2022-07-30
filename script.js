@@ -1,11 +1,13 @@
-let currentValue = "0";
+let currentValue = "0"; // value either input by user or output by calculation
 let previousValue = "0";
 let topExpression = "";
-let isOperatorActive = false;
+let operatorType = '';
+// let isOperatorActive = false;
 
 let displayBottom = document.getElementById("display-bottom");
 let displayTop = document.getElementById("display-top");
 
+// top and bottom displays equal
 displayBottom.innerHTML = currentValue;
 displayTop.innerHTML = topExpression;
 
@@ -16,6 +18,7 @@ const toggleNegative = document.getElementById("toggle-negative");
 const decimal = document.getElementById("decimal");
 const clear = document.getElementById("clear");
 const equals = document.getElementById("equals");
+
 
 numberButtons.forEach(button => {
     button.addEventListener("click", function() {
@@ -31,10 +34,11 @@ operatorButtons.forEach(button => {
     button.addEventListener("click", function() {
         topExpression += `${currentValue} ${button.textContent} `;
         displayTop.innerHTML = topExpression;
-        if(isOperatorActive == false) {
-            isOperatorActive = true;
-        }
-    console.log(topExpression);
+            operatorType = button.textContent;
+        console.log(operatorType);
+        // if(isOperatorActive == false) {
+        //     isOperatorActive = true;
+        // }
     previousValue = currentValue;
     currentValue = '0';
     })
@@ -45,7 +49,7 @@ clear.addEventListener("click", function() {
     topExpression = "";
     displayBottom.innerHTML = currentValue;
     displayTop.innerHTML = topExpression;
-    isOperatorActive = false;
+    // isOperatorActive = false;
 });
 
 decimal.addEventListener("click", function() {
@@ -65,14 +69,12 @@ toggleNegative.addEventListener("click", function() {
 })
 
 equals.addEventListener("click", function() {
-    let a = parseFloat(previousValue);
-    console.log(a);
-    let b = parseFloat(currentValue);
-    console.log(b);
-    currentValue = operate(a, b);
-    displayBottom.innerHTML = currentValue;
-
-})
+    if(operatorType == '=') {
+        return;
+    } else {
+        operateEquals();
+    }
+});
 
 deleteButton.addEventListener("click", function() {   
     currentValue = currentValue.substring(0, currentValue.length - 1);
@@ -81,6 +83,16 @@ deleteButton.addEventListener("click", function() {
     }
     displayBottom.innerHTML = currentValue;
 });
+
+function operateEquals () {
+    let a = parseFloat(previousValue);
+    let b = parseFloat(currentValue);
+    topExpression += `${currentValue} = `;
+    displayTop.innerHTML = topExpression;
+    currentValue = String(operate(a, b));
+    displayBottom.innerHTML = currentValue;
+    operatorType = '=';
+}
 
 //operator functions
 function add(a, b) {
@@ -97,14 +109,17 @@ function divide(a, b) {
 }
 
 function operate(a, b) {
-    if(topExpression.includes("+")) {
+    if(operatorType == '+') {
         return add(a, b);
-    } else if (topExpression.includes("-")) {
+    } else if (operatorType == '-') {
         return subtract(a, b);
-    } else if (topExpression.includes("x")) {
+    } else if (operatorType == 'x') {
         return multiply(a, b);
-    } else {
+    } else if (operatorType == '÷'){
         return divide(a, b);
+    }
+    else {
+        return;
     }
 }
 
