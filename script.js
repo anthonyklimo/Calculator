@@ -1,8 +1,10 @@
 let currentValue = "0"; // value either input by user or output by calculation
 let previousValue = "0";
 let topExpression = "";
-let operatorType = '';
-// let isOperatorActive = false;
+let operatorType = '=';
+let isOperatorActive = false;
+
+
 
 let displayBottom = document.getElementById("display-bottom");
 let displayTop = document.getElementById("display-top");
@@ -27,29 +29,25 @@ numberButtons.forEach(button => {
         }
         currentValue += button.dataset.num;
         displayBottom.innerHTML = currentValue;
-    })
-})
+        isOperatorActive = false;
+    });
+});
 
 operatorButtons.forEach(button => {
     button.addEventListener("click", function() {
-        topExpression += `${currentValue} ${button.textContent} `;
-        displayTop.innerHTML = topExpression;
-            operatorType = button.textContent;
-        console.log(operatorType);
-        // if(isOperatorActive == false) {
-        //     isOperatorActive = true;
-        // }
-    previousValue = currentValue;
-    currentValue = '0';
-    })
-})
+    if(!isOperatorActive) {
+        clickOperator(button);
+    }
+    });
+});
 
 clear.addEventListener("click", function() {
     currentValue = "0";
     topExpression = "";
     displayBottom.innerHTML = currentValue;
     displayTop.innerHTML = topExpression;
-    // isOperatorActive = false;
+    isOperatorActive = false;
+
 });
 
 decimal.addEventListener("click", function() {
@@ -57,22 +55,24 @@ decimal.addEventListener("click", function() {
         currentValue += ".";
         displayBottom.innerHTML = currentValue;
     }
-})
+});
 
 toggleNegative.addEventListener("click", function() {
     if(currentValue.charAt(0) == "-") {
         currentValue = currentValue.substring(1, currentValue.length);
+    } else if(currentValue.charAt(0) == "0") {
+        currentValue = "-";
     } else {
         currentValue = "-" + currentValue;
     }
     displayBottom.innerHTML = currentValue;
-})
+});
 
 equals.addEventListener("click", function() {
-    if(operatorType == '=') {
+    if(operatorType == '=' || isOperatorActive) {
         return;
     } else {
-        operateEquals();
+        clickEquals();
     }
 });
 
@@ -84,12 +84,22 @@ deleteButton.addEventListener("click", function() {
     displayBottom.innerHTML = currentValue;
 });
 
-function operateEquals () {
+function clickOperator(button) {
+    topExpression = `${currentValue} ${button.textContent} `;
+    displayTop.innerHTML = topExpression;
+    operatorType = button.textContent;
+    previousValue = currentValue;
+    currentValue = '0';
+    isOperatorActive = true;
+}
+
+function clickEquals () {
     let a = parseFloat(previousValue);
     let b = parseFloat(currentValue);
     topExpression += `${currentValue} = `;
     displayTop.innerHTML = topExpression;
-    currentValue = String(operate(a, b));
+    currentValue = executeOperation(a, b).toFixed(8); //allows up to 8 decimal places
+    currentValue = String(parseFloat(currentValue)); //removes trailing zeroes
     displayBottom.innerHTML = currentValue;
     operatorType = '=';
 }
@@ -108,7 +118,7 @@ function divide(a, b) {
     return a / b;
 }
 
-function operate(a, b) {
+function executeOperation(a, b) {
     if(operatorType == '+') {
         return add(a, b);
     } else if (operatorType == '-') {
