@@ -71,6 +71,7 @@ function clickDecimal() {
     if(!currentValue.includes(".")) {
         currentValue += ".";
         displayBottom.innerHTML = currentValue;
+        displayTop.innerHTML += ".";
     }
 }
 function clickDelete() {
@@ -86,8 +87,9 @@ function clickNumber(button) {
     }
     currentValue += button.dataset.num;
     displayBottom.innerHTML = currentValue;
-    displayTop.innerHTML += currentValue;
+    displayTop.innerHTML += button.dataset.num;
     isOperatorActive = false;
+    console.log(currentValue);
 }
 
 function clickClear() {
