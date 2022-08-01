@@ -38,21 +38,11 @@ clear.addEventListener("click", function() {
 });
 
 decimal.addEventListener("click", function() {
-    if(!currentValue.includes(".")) {
-        currentValue += ".";
-        displayBottom.innerHTML = currentValue;
-    }
+    clickDecimal();
 });
 
 toggleNegative.addEventListener("click", function() {
-    if(currentValue.charAt(0) == "-") {
-        currentValue = currentValue.substring(1, currentValue.length);
-    } else if(currentValue.charAt(0) == "0") {
-        currentValue = "-";
-    } else {
-        currentValue = "-" + currentValue;
-    }
-    displayBottom.innerHTML = currentValue;
+    clickToggleNegative();
 });
 
 equals.addEventListener("click", function() {
@@ -67,6 +57,22 @@ deleteButton.addEventListener("click", function() {
     clickDelete();
 });
 
+function clickToggleNegative() {
+    if(currentValue.charAt(0) == "-") {
+        currentValue = currentValue.substring(1, currentValue.length);
+    } else if(currentValue.charAt(0) == "0") {
+        currentValue = "-";
+    } else {
+        currentValue = "-" + currentValue;
+    }
+    displayBottom.innerHTML = currentValue;
+}
+function clickDecimal() {
+    if(!currentValue.includes(".")) {
+        currentValue += ".";
+        displayBottom.innerHTML = currentValue;
+    }
+}
 function clickDelete() {
     currentValue = currentValue.substring(0, currentValue.length - 1);
     if(currentValue =="") {
@@ -80,7 +86,7 @@ function clickNumber(button) {
     }
     currentValue += button.dataset.num;
     displayBottom.innerHTML = currentValue;
-    displayTop.innerHTML += button.dataset.num;
+    displayTop.innerHTML += currentValue;
     isOperatorActive = false;
 }
 
@@ -101,7 +107,6 @@ function clickOperator(button) {
         displayBottom.innerHTML = currentValue;
         displayTop.innerHTML = `${currentValue} ${button.textContent} `;
         console.log(previousValue);
-
     }
     displayTop.innerHTML = "";
     displayTop.innerHTML = `${currentValue} ${button.textContent} `;
@@ -133,7 +138,6 @@ function multiply(a, b) {
 }
 function divide(a, b) {
     return a / b;
-    
 }
 
 function executeOperation(a, b) {
@@ -144,7 +148,6 @@ function executeOperation(a, b) {
     } else if (operatorType == 'x') {
         return multiply(a, b);
     } else if (operatorType == '÷'){
-
         return divide(a, b);
     }
     else {
