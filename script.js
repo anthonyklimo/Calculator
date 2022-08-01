@@ -1,17 +1,14 @@
 let currentValue = "0"; // value either input by user or output by calculation
-let previousValue = "0";
-let topExpression = "";
-let operatorType = '=';
+let previousValue = "";
+let operatorType = "="; 
 let isOperatorActive = false;
-
-
 
 let displayBottom = document.getElementById("display-bottom");
 let displayTop = document.getElementById("display-top");
 
 // top and bottom displays equal
 displayBottom.innerHTML = currentValue;
-displayTop.innerHTML = topExpression;
+displayTop.innerHTML = "";
 
 const numberButtons = document.querySelectorAll("[data-num]");
 const operatorButtons = document.querySelectorAll(".operator");
@@ -21,33 +18,23 @@ const decimal = document.getElementById("decimal");
 const clear = document.getElementById("clear");
 const equals = document.getElementById("equals");
 
-
 numberButtons.forEach(button => {
     button.addEventListener("click", function() {
-        if(currentValue == "0") {
-            currentValue = "";
-        }
-        currentValue += button.dataset.num;
-        displayBottom.innerHTML = currentValue;
-        isOperatorActive = false;
+        
+        clickNumber(button);
     });
 });
 
 operatorButtons.forEach(button => {
     button.addEventListener("click", function() {
-    if(!isOperatorActive) {
+    if(!isOperatorActive) { // prevents repeatedly clicking operator buttons
         clickOperator(button);
     }
     });
 });
 
 clear.addEventListener("click", function() {
-    currentValue = "0";
-    topExpression = "";
-    displayBottom.innerHTML = currentValue;
-    displayTop.innerHTML = topExpression;
-    isOperatorActive = false;
-
+    clickClear();
 });
 
 decimal.addEventListener("click", function() {
@@ -77,18 +64,49 @@ equals.addEventListener("click", function() {
 });
 
 deleteButton.addEventListener("click", function() {   
+    clickDelete();
+});
+
+function clickDelete() {
     currentValue = currentValue.substring(0, currentValue.length - 1);
     if(currentValue =="") {
         currentValue = "0";
     }
     displayBottom.innerHTML = currentValue;
-});
+}
+function clickNumber(button) {
+    if(currentValue == "0") {
+        currentValue = "";
+    }
+    currentValue += button.dataset.num;
+    displayBottom.innerHTML = currentValue;
+    displayTop.innerHTML += button.dataset.num;
+    isOperatorActive = false;
+}
 
+function clickClear() {
+    currentValue = "0";
+    previousValue = "";
+    displayBottom.innerHTML = currentValue;
+    displayTop.innerHTML = "";
+    isOperatorActive = false;
+}
 function clickOperator(button) {
-    topExpression = `${currentValue} ${button.textContent} `;
-    displayTop.innerHTML = topExpression;
+
+    if(previousValue != "" && operatorType != "=") {
+        let a = parseFloat(previousValue);
+        let b = parseFloat(currentValue);
+        currentValue = executeOperation(a, b).toFixed(8);
+        currentValue = String(parseFloat(currentValue));
+        displayBottom.innerHTML = currentValue;
+        displayTop.innerHTML = `${currentValue} ${button.textContent} `;
+        console.log(previousValue);
+
+    }
+    displayTop.innerHTML = "";
+    displayTop.innerHTML = `${currentValue} ${button.textContent} `;
     operatorType = button.textContent;
-    previousValue = currentValue;
+    previousValue = currentValue;  
     currentValue = '0';
     isOperatorActive = true;
 }
@@ -96,8 +114,7 @@ function clickOperator(button) {
 function clickEquals () {
     let a = parseFloat(previousValue);
     let b = parseFloat(currentValue);
-    topExpression += `${currentValue} = `;
-    displayTop.innerHTML = topExpression;
+    displayTop.innerHTML += ` = `;
     currentValue = executeOperation(a, b).toFixed(8); //allows up to 8 decimal places
     currentValue = String(parseFloat(currentValue)); //removes trailing zeroes
     displayBottom.innerHTML = currentValue;
@@ -116,6 +133,7 @@ function multiply(a, b) {
 }
 function divide(a, b) {
     return a / b;
+    
 }
 
 function executeOperation(a, b) {
@@ -126,10 +144,10 @@ function executeOperation(a, b) {
     } else if (operatorType == 'x') {
         return multiply(a, b);
     } else if (operatorType == '÷'){
+
         return divide(a, b);
     }
     else {
         return;
     }
 }
-
