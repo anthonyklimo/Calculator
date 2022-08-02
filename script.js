@@ -42,7 +42,11 @@ decimal.addEventListener("click", function() {
 });
 
 toggleNegative.addEventListener("click", function() {
-    clickToggleNegative();
+    if(operatorType == "=") { 
+        return
+    } else {
+        clickToggleNegative();
+    }
 });
 
 equals.addEventListener("click", function() {
@@ -60,12 +64,20 @@ deleteButton.addEventListener("click", function() {
 function clickToggleNegative() {
     if(currentValue.charAt(0) == "-") {
         currentValue = currentValue.substring(1, currentValue.length);
+        displayTop.innerHTML = `${previousValue} ${operatorType} ${currentValue}`;
+
+
     } else if(currentValue.charAt(0) == "0") {
         currentValue = "-";
+        displayTop.innerHTML += "-";
+        
+        //prevents 
     } else {
-        currentValue = "-" + currentValue;
+        currentValue = `-${currentValue}`;
+        displayTop.innerHTML = `${previousValue} ${operatorType} ${currentValue}`;
     }
     displayBottom.innerHTML = currentValue;
+    
 }
 function clickDecimal() {
     if(!currentValue.includes(".")) {
@@ -100,7 +112,6 @@ function clickClear() {
     isOperatorActive = false;
 }
 function clickOperator(button) {
-
     if(previousValue != "" && operatorType != "=") {
         let a = parseFloat(previousValue);
         let b = parseFloat(currentValue);
